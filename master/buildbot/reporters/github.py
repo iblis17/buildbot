@@ -161,7 +161,7 @@ class GitHubStatusPush(http.HttpStatusPushBase):
                 context = unicode2NativeString(context)
                 issue = unicode2NativeString(issue)
                 description = unicode2NativeString(description)
-                yield self.createStatus(
+                res = yield self.createStatus(
                     repo_user=repo_user,
                     repo_name=repo_name,
                     sha=sha,
@@ -177,6 +177,12 @@ class GitHubStatusPush(http.HttpStatusPushBase):
                         'at {sha}, context "{context}", issue {issue}.'.format(
                             state=state, repoOwner=repoOwner, repoName=repoName,
                             sha=sha, issue=issue, context=context))
+                    content = yield res.content()
+                    log.msg(
+                        'GitHub status API response: {}, {}'.format(
+                            res.code,
+                            content,
+                        ))
             except Exception as e:
                 log.err(
                     e,
